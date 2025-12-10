@@ -1,0 +1,41 @@
+{
+    "type": "FeatureCollection",
+    "name": "comunidad_linguistica",
+    "features": [{
+        "type": "Feature",
+        "properties": {
+            "COMUNIDAD": "K'iche'",
+            "HABLANTES": 1200000
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-91.5, 15.5],
+                    [-91, 15.5],
+                    [-91, 15],
+                    [-91.5, 15],
+                    [-91.5, 15.5]
+                ]
+            ]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "COMUNIDAD": "Q'eqchi'",
+            "HABLANTES": 900000
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-90, 16.5],
+                    [-89.5, 16.5],
+                    [-89.5, 16],
+                    [-90, 16],
+                    [-90, 16.5]
+                ]
+            ]
+        }
+    }]
+}

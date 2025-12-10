@@ -1,0 +1,291 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet CSS Import */
+/* @import "leaflet/dist/leaflet.css"; */
+
+/* ArcGIS CSS customizations */
+.arcgis-map-container {
+  @apply rounded-lg overflow-hidden;
+}
+
+/* Override ArcGIS default styles to match your theme */
+.esri-view .esri-view-surface--inset-outline:focus::after {
+  @apply ring-2 ring-primary ring-offset-2;
+}
+
+.esri-ui-corner .esri-component {
+  @apply bg-background/80 backdrop-blur-sm border border-border shadow-lg;
+}
+
+.esri-zoom .esri-widget--button {
+  @apply bg-background hover:bg-accent;
+}
+
+.esri-popup__main-container {
+  @apply bg-background border border-border shadow-xl;
+}
+
+.esri-popup__header {
+  @apply bg-muted/50;
+}
+
+.esri-popup__content {
+  @apply text-foreground;
+}
+
+/* Custom loading spinner for ArcGIS maps */
+.arcgis-loading {
+  @apply flex items-center justify-center;
+}
+
+.arcgis-loading::after {
+  content: '';
+  @apply w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin;
+}
+/* @import "@arcgis/core/assets/esri/themes/light/main.css"; */
+
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 197 71% 73%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 120 60% 50%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 80%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5% 64.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 4.8% 95.9%;
+    --sidebar-foreground: 240 10% 3.9%;
+    --sidebar-primary: 197 71% 73%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: hsl(120 60% 50% / 0.15);
+    --sidebar-accent-foreground: 120 60% 30%;
+    --sidebar-accent-hover: 120 60% 50%;
+    --sidebar-accent-hover-foreground: 0 0% 98%;
+    --sidebar-border: 240 5.9% 85%;
+    --sidebar-ring: 240 5% 64.9%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 197 71% 73%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 120 60% 50%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 197 71% 73%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: hsl(120 60% 50% / 0.15);
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-accent-hover: 120 60% 50%;
+    --sidebar-accent-hover-foreground: 0 0% 0%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 217 91% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .geodata-layout {
+    @apply flex h-full w-full bg-card overflow-hidden;
+  }
+  .geodata-panel {
+    @apply w-80 flex-shrink-0 bg-background/50 flex flex-col border-r;
+  }
+  .geodata-tabs {
+    @apply flex-shrink-0 flex items-center justify-around border-b border-border;
+  }
+  .geodata-tabs button {
+    @apply px-4 py-3 text-sm font-medium text-muted-foreground flex items-center gap-2;
+  }
+  .geodata-tabs button.active {
+    @apply text-primary border-b-2 border-primary;
+  }
+  .geodata-tabs button:not(.active):hover {
+    @apply text-foreground;
+  }
+  .geodata-content {
+    @apply p-4 flex-grow flex flex-col overflow-y-auto;
+  }
+  .geodata-controls {
+    @apply space-y-3 mb-4;
+  }
+  .geodata-controls label {
+    @apply text-sm font-medium mb-1 block;
+  }
+  .geodata-controls select, .geodata-controls input[type="text"] {
+    @apply w-full bg-input p-2 rounded-md border border-border text-sm;
+  }
+  .search-box {
+    @apply relative flex items-center;
+  }
+  .search-box svg {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground;
+  }
+   .search-box input {
+    @apply pl-8;
+  }
+  .layer-list {
+    @apply flex-grow space-y-1;
+  }
+  .layer-list-header {
+    @apply flex justify-between items-center text-xs font-bold text-muted-foreground p-2;
+  }
+  .layer-item {
+    @apply flex items-center justify-between p-2 rounded-md hover:bg-muted;
+  }
+  .layer-item span {
+    @apply text-sm;
+  }
+  .layer-actions {
+    @apply flex items-center gap-1;
+  }
+  .layer-actions button {
+    @apply p-1 rounded-md hover:bg-accent hover:text-accent-foreground;
+  }
+  .pagination-controls {
+    @apply flex-shrink-0 flex items-center justify-between text-sm text-muted-foreground pt-4;
+  }
+  .pagination-buttons {
+    @apply flex items-center gap-1;
+  }
+  .pagination-buttons button {
+    @apply p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .content-title {
+    @apply text-lg font-bold mb-4 text-center;
+  }
+  .active-layers-list {
+    @apply flex-grow space-y-3;
+  }
+  .no-layers-msg {
+    @apply text-center text-muted-foreground mt-8;
+  }
+  .active-layer-item {
+    @apply p-3 rounded-md border border-border bg-muted/30;
+  }
+  .active-layer-header {
+    @apply flex items-center justify-between mb-2;
+  }
+  .active-layer-header span {
+    @apply text-sm font-semibold border-l-4 pl-2;
+  }
+  .active-layer-actions {
+    @apply flex items-center gap-1;
+  }
+  .active-layer-actions button {
+    @apply p-1.5 rounded-md hover:bg-accent hover:text-accent-foreground;
+  }
+  .opacity-control {
+    @apply flex items-center gap-2;
+  }
+  .opacity-control label {
+    @apply text-xs text-muted-foreground;
+  }
+  .opacity-control input[type="range"] {
+    @apply w-full;
+  }
+  .geodata-map-area {
+    @apply flex-1 relative;
+  }
+  .leaflet-control-layers-base label span {
+    color: #333;
+  }
+  .btn-active-text-black:active {
+    color: #000;
+  }
+  .popup-content {
+    @apply max-h-60 overflow-y-auto;
+  }
+  .popup-content table {
+      @apply w-full text-left text-sm;
+  }
+  .popup-content th {
+      @apply bg-muted/50 p-2 font-semibold;
+  }
+  .popup-content td {
+      @apply p-2;
+  }
+  .resizer-handle {
+    @apply bg-transparent hover:bg-primary/20 transition-colors;
+  }
+  /* Geosearch styles */
+  .geosearch-container {
+    @apply absolute top-[2px] left-[36px] z-[1000] flex items-center gap-2;
+  }
+  .geosearch-results {
+      @apply absolute top-full left-0 mt-2 w-full max-w-sm rounded-md bg-background border border-border shadow-lg max-h-60 overflow-y-auto;
+  }
+  .geosearch-results ul {
+      @apply list-none p-0 m-0;
+  }
+  .geosearch-results li {
+      @apply p-2 text-sm cursor-pointer hover:bg-muted;
+  }
+  .leaflet-top.leaflet-right {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+
+.mapDiv {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}

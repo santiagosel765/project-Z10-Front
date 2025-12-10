@@ -1,0 +1,43 @@
+{
+    "type": "FeatureCollection",
+    "name": "poblacion_por_pueblo",
+    "features": [{
+        "type": "Feature",
+        "properties": {
+            "PUEBLO": "Ladino",
+            "POBLACION": 7500000,
+            "AREA_KM2": 50000
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-91, 15],
+                    [-90, 15],
+                    [-90, 14.5],
+                    [-91, 14.5],
+                    [-91, 15]
+                ]
+            ]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "PUEBLO": "Maya",
+            "POBLACION": 6200000,
+            "AREA_KM2": 45000
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-92, 17],
+                    [-91, 17],
+                    [-91, 16],
+                    [-92, 16],
+                    [-92, 17]
+                ]
+            ]
+        }
+    }]
+}
