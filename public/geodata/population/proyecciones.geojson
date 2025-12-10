@@ -1,0 +1,24 @@
+{
+    "type": "FeatureCollection",
+    "name": "proyecciones",
+    "features": [{
+        "type": "Feature",
+        "properties": {
+            "DEPARTAMENTO": "Guatemala",
+            "PROYECCION_2030": 3500000,
+            "PROYECCION_2050": 4500000
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-90.8, 14.9],
+                    [-90.3, 14.9],
+                    [-90.3, 14.3],
+                    [-90.8, 14.3],
+                    [-90.8, 14.9]
+                ]
+            ]
+        }
+    }]
+}

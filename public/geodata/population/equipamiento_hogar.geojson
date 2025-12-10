@@ -1,0 +1,24 @@
+{
+    "type": "FeatureCollection",
+    "name": "equipamiento_hogar",
+    "features": [{
+        "type": "Feature",
+        "properties": {
+            "REGION": "Metropolitana",
+            "TIENE_TV": 95,
+            "TIENE_REFRI": 90
+        },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [-90.6, 14.7],
+                    [-90.4, 14.7],
+                    [-90.4, 14.5],
+                    [-90.6, 14.5],
+                    [-90.6, 14.7]
+                ]
+            ]
+        }
+    }]
+}

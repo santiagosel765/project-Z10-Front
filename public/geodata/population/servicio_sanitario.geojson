@@ -1,0 +1,25 @@
+{
+    "type": "FeatureCollection",
+    "name": "servicio_sanitario",
+    "features": [{
+        "type": "Feature",
+        "properties": {
+            "TIPO_HOGAR": "Urbano",
+            "CON_INODORO": 85
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [-90.5133, 14.6349]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "TIPO_HOGAR": "Rural",
+            "CON_INODORO": 45
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [-91.5167, 14.8333]
+        }
+    }]
+}

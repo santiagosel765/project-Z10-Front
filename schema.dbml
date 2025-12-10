@@ -1,0 +1,365 @@
+// =====================================
+// DBML Schema for ZENIT GeoAI Platform
+// Generated from DDL SQL
+// =====================================
+
+Project ZENIT_GeoAI {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # ZENIT GeoAI Platform Database Schema
+    
+    This schema supports:
+    - User management with role-based access control
+    - ArcGIS WebMap integration
+    - GeoJSON layer storage with PostGIS
+    - Spatial data management
+    - Audit trails for all operations
+  '''
+}
+
+// =====================================
+// CORE USER MANAGEMENT
+// =====================================
+
+Table user {
+  id serial [primary key, note: 'User unique identifier']
+  
+  // Personal Information
+  first_name varchar(100) [not null, note: 'User first name']
+  last_name varchar(100) [not null, note: 'User last name']
+  employee_code varchar(50) [unique, not null, note: 'Unique employee identifier']
+  
+  // Contact Information
+  phone varchar(20) [note: 'Phone number with validation']
+  email varchar(255) [unique, not null, note: 'Email address for login']
+  profile_photo_url text [note: 'URL to user profile photo']
+  
+  // Authentication
+  password_hash varchar(255) [not null, note: 'Hashed password for security']
+  is_active boolean [default: true, not null, note: 'Account status flag']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id, note: 'User who created this record']
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  updated_by integer [ref: > user.id, note: 'User who last updated this record']
+  
+  Note: '''
+    Central user table with self-referencing audit fields.
+    Includes validation for email format and phone numbers.
+    Supports soft deletion through is_active flag.
+  '''
+  
+  indexes {
+    (email) 
+    (employee_code) 
+    (is_active) [note: 'Active user queries']
+    (created_at) [note: 'Audit trail queries']
+    (first_name, last_name) [note: 'Full name searches']
+    (phone) 
+  }
+}
+
+Table role {
+  id serial [primary key, note: 'Role unique identifier']
+  
+  // Role Information
+  name varchar(50) [unique, not null, note: 'Role name (lowercase_underscore)']
+  description text [note: 'Role description']
+  is_active boolean [default: true, not null, note: 'Role status flag']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  updated_by integer [ref: > user.id]
+  
+  Note: '''
+    System roles for RBAC (Role-Based Access Control).
+    Default roles: user, admin, superadmin
+  '''
+  
+  indexes {
+    (name) 
+    (is_active)
+    (created_at)
+  }
+}
+
+Table user_role {
+  user_id integer [ref: > user.id, note: 'User reference']
+  role_id integer [ref: > role.id, note: 'Role reference']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  
+  primary key (user_id, role_id)
+  
+  Note: '''
+    Many-to-many relationship between users and roles.
+    Supports multiple roles per user.
+  '''
+  
+  indexes {
+    (user_id) [note: 'Find roles by user']
+    (role_id) [note: 'Find users by role']
+    (created_at) [note: 'Audit trail']
+  }
+}
+
+// =====================================
+// NAVIGATION & PERMISSIONS
+// =====================================
+
+Table page {
+  id serial [primary key, note: 'Page unique identifier']
+  
+  // Page Information
+  name varchar(100) [not null, note: 'Display name for navigation']
+  description text [note: 'Page description']
+  url varchar(255) [unique, not null, note: 'Route URL path']
+  icon varchar(100) [note: 'Icon class or name']
+  order integer [default: 0, not null, note: 'Display order in navigation']
+  is_active boolean [default: true, not null, note: 'Page visibility flag']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  updated_by integer [ref: > user.id]
+  
+  Note: '''
+    System pages/routes for navigation menu generation.
+    Supports hierarchical ordering and permissions.
+  '''
+  
+  indexes {
+    (url) [unique, note: 'Route lookups']
+    (order, name) 
+    (is_active)
+    (name) 
+    (created_at)
+  }
+}
+
+Table role_page {
+  role_id integer [ref: > role.id, note: 'Role reference']
+  page_id integer [ref: > page.id, note: 'Page reference']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  
+  primary key (role_id, page_id)
+  
+  Note: '''
+    Defines which pages each role can access.
+    Controls navigation menu visibility.
+  '''
+  
+  indexes {
+    (role_id) [note: 'Find pages by role (common query)']
+    (page_id) [note: 'Find roles by page']
+    (created_at)
+  }
+}
+
+// =====================================
+// ARCGIS INTEGRATION
+// =====================================
+
+Table map {
+  id serial [primary key, note: 'Map configuration identifier']
+  
+  // Map Information
+  name varchar(200) [not null, note: 'Map display name']
+  description text [note: 'Map description']
+  
+  // ArcGIS Configuration
+  arcgis_webmap_item_id varchar(100) [not null, note: 'ArcGIS WebMap Item ID']
+  
+  // Map Categorization
+  map_type varchar(50) [default: 'general', note: 'Map category (general, operations, analytics)']
+  
+  // Control Flags
+  is_active boolean [default: true, not null, note: 'Map availability flag']
+  is_default boolean [default: false, not null, note: 'Default map flag (only one allowed)']
+  
+  // Flexible Configuration
+  settings jsonb [default: '{}', note: 'Additional map settings (zoom, extent, etc.)']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  updated_by integer [ref: > user.id]
+  
+  Note: '''
+    ArcGIS WebMap configurations for the application.
+    Supports multiple maps with one default.
+    Settings stored as flexible JSONB.
+  '''
+  
+  indexes {
+    (is_active)
+    (is_default) 
+    (map_type) 
+    (arcgis_webmap_item_id) [note: 'ArcGIS item lookups']
+    (created_at)
+    (settings) 
+  }
+}
+
+// =====================================
+// GEOSPATIAL DATA MANAGEMENT
+// =====================================
+
+Table layer {
+  id serial [primary key, note: 'Layer unique identifier']
+  
+  // Layer Information
+  name varchar(200) [not null, note: 'Layer display name']
+  description text [note: 'Layer description']
+  
+  // Ownership
+  user_id integer [ref: > user.id, note: 'Layer owner']
+  
+  // Spatial Metadata
+  layer_type varchar(50) [not null, note: 'Geometry type (point, polygon, etc.)']
+  total_features integer [default: 0, not null, note: 'Number of features in layer']
+  
+  // Bounding Box (PostGIS)
+  bbox_geometry geometry [note: 'Layer bounding box for quick extent calculations']
+  
+  // Styling
+  style jsonb [default: `{
+    "fillColor": "#3388ff",
+    "fillOpacity": 0.5,
+    "strokeColor": "#0066cc",
+    "strokeWidth": 2,
+    "iconUrl": null
+  }`, note: 'Layer styling configuration']
+  
+  // Visibility & Sharing
+  is_active boolean [default: true, not null]
+  is_public boolean [default: false, not null, note: 'Public visibility flag']
+  shared_with integer[] [note: 'Array of user IDs with access']
+  
+  // File Metadata
+  original_filename varchar(255) [note: 'Original uploaded filename']
+  file_size_bytes bigint [note: 'Original file size']
+  
+  // Audit Fields
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  created_by integer [ref: > user.id]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  updated_by integer [ref: > user.id]
+  
+  Note: '''
+    User-uploaded GeoJSON layers converted to PostGIS.
+    Supports styling, sharing, and spatial indexing.
+    Maintains original file metadata.
+  '''
+  
+  indexes {
+    (user_id) 
+    (is_public) 
+    (is_active)
+    (layer_type) 
+    (bbox_geometry)
+    (shared_with) 
+    (created_at)
+    (style) 
+  }
+}
+
+Table layer_feature {
+  id bigserial [primary key, note: 'Feature unique identifier']
+  
+  // Layer Reference
+  layer_id integer [ref: > layer.id, note: 'Parent layer']
+  
+  // Feature Metadata
+  feature_index integer [not null, note: 'Order in original GeoJSON']
+  
+  // Spatial Data (PostGIS)
+  geometry geometry [not null, note: 'PostGIS geometry (SRID 4326)']
+  
+  // Feature Properties
+  properties jsonb [default: '{}', note: 'GeoJSON properties as JSONB']
+  
+  // Audit
+  created_at timestamp [default: `CURRENT_TIMESTAMP`, not null]
+  
+  Note: '''
+    Individual geometric features from layers.
+    Stored as PostGIS geometries with JSONB properties.
+    Critical for spatial queries and analysis.
+  '''
+  
+  indexes {
+    (layer_id) [note: 'Layer features lookup']
+    (geometry) 
+    (properties) 
+    (layer_id, feature_index) [note: 'Feature ordering within layer']
+    (layer_id, feature_index) [unique, note: 'Unique feature per layer']
+  }
+}
+
+// =====================================
+// RELATIONSHIPS SUMMARY
+// =====================================
+
+
+// =====================================
+// ENUMS FOR BETTER DOCUMENTATION
+// =====================================
+
+Enum layer_type_enum {
+  point
+  linestring
+  polygon
+  multipoint
+  multilinestring
+  multipolygon
+  mixed
+}
+
+Enum map_type_enum {
+  general
+  operations
+  analytics
+  demographic
+  environmental
+}
+
+Enum role_name_enum {
+  user [note: "Basic platform access"]
+  admin [note: "Administrative privileges"]
+  superadmin [note: "Full system access"]
+}
+
+// =====================================
+// TABLE GROUPS FOR VISUALIZATION
+// =====================================
+
+TableGroup "User Management" {
+  user
+  role
+  user_role
+}
+
+TableGroup "Navigation & Permissions" {
+  page
+  role_page
+}
+
+TableGroup "GIS Integration" {
+  map
+}
+
+TableGroup "Geospatial Data" {
+  layer
+  layer_feature
+}
